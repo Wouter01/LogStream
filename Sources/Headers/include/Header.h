@@ -1,11 +1,3 @@
-//===-- ActivityStreamSPI.h -------------------------------------*- C++ -*-===//
-//
-// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
-// See https://llvm.org/LICENSE.txt for license information.
-// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-//
-//===----------------------------------------------------------------------===//
-
 #ifndef OSActivityLogMessageEvent_h
 #define OSActivityLogMessageEvent_h
 
@@ -67,7 +59,6 @@ NS_ASSUME_NONNULL_END
 
 #define OS_ACTIVITY_MAX_CALLSTACK 32
 
-// Enums
 enum {
     OS_ACTIVITY_STREAM_TYPE_ACTIVITY_CREATE = 0x0201,
     OS_ACTIVITY_STREAM_TYPE_ACTIVITY_TRANSITION = 0x0202,
@@ -85,8 +76,6 @@ enum {
     OS_ACTIVITY_STREAM_TYPE_STATEDUMP_EVENT = 0x0A00,
 };
 typedef uint32_t os_activity_stream_type_t;
-
-// Types
 
 typedef uint64_t os_activity_id_t;
 typedef struct os_activity_stream_s *os_activity_stream_t;
@@ -191,8 +180,6 @@ struct os_activity_stream_entry_s {
         struct os_activity_statedump_s statedump;
     };
 };
-
-// Blocks
 
 typedef bool (^os_activity_stream_block_t)(os_activity_stream_entry_t entry,
                                            int error);

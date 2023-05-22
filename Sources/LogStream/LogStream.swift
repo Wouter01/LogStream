@@ -16,9 +16,6 @@ public enum LogStream {
     ///   - flags: The options specifying the behavior of the activity stream. Default value is `[.historical, .processOnly]`.
     /// - Returns: An `AsyncStream` that emits `LogMessage` objects representing the activity logs.
     ///
-    /// The `logs(for:flags:)` method retrieves activity logs for a specific process identified by its PID. It returns an `AsyncStream`
-    /// that emits `LogMessage` objects representing the activity logs for the process. 
-    ///
     /// Usage Example:
     ///
     /// ```swift
@@ -27,7 +24,6 @@ public enum LogStream {
     ///
     /// Task {
     ///     for await log in logStream {
-    ///         // Process the log message
     ///         print(log)
     ///     }
     /// }
@@ -65,6 +61,25 @@ public enum LogStream {
 
             resumeLog(stream: stream)
         }
+    }
+
+    /// Retrieve activity logs for all processes using an asynchronous stream.
+    ///
+    /// - Parameters:
+    ///   - flags: The options specifying the behavior of the activity stream. Default value is `[.historical, .processOnly]`.
+    /// - Returns: An `AsyncStream` that emits `LogMessage` objects representing the activity logs.
+    ///
+    /// Usage Example:
+    ///
+    /// ```swift
+    /// Task {
+    ///     for await log in LogStream.logs() {
+    ///         print(log)
+    ///     }
+    /// }
+    /// ```
+    public static func logs(flags: ActivityStreamOptions = [.historical, .processOnly]) -> AsyncStream<LogMessage> {
+        LogStream.logs(for: -1, flags: flags)
     }
 }
 

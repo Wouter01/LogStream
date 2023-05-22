@@ -4,59 +4,6 @@
 #include <sys/time.h>
 @import Foundation;
 
-NS_ASSUME_NONNULL_BEGIN
-
-/// Describes a basic activity event reported by LoggingSupport.
-/// The implementation of this class resides in the LoggingSupport framework.
-@interface OSActivityEvent : NSObject
-
-@property (readonly, nonatomic) NSUInteger activityID;
-@property (copy, nonatomic) NSString *eventMessage;
-@property (readonly, nonatomic) NSUInteger eventType;
-@property (readonly, nonatomic) NSUInteger machTimestamp;
-@property (readonly, nonatomic) NSUInteger parentActivityID;
-@property (readonly, nonatomic) BOOL persisted;
-@property (readonly, copy, nonatomic) NSString *process;
-@property (readonly, nonatomic) int processID;
-@property (readonly, copy, nonatomic) NSString *processImagePath;
-@property (readonly, copy, nonatomic) NSUUID *processImageUUID;
-@property (readonly, nonatomic) NSUInteger processUniqueID;
-@property (readonly, copy, nonatomic) NSString *sender;
-@property (readonly, copy, nonatomic) NSString *senderImagePath;
-@property (readonly, copy, nonatomic) NSUUID *senderImageUUID;
-@property (readonly, nonatomic) NSUInteger threadID;
-@property (readonly, nonatomic) struct timeval timeGMT;
-@property (readonly, copy, nonatomic) NSDate *timestamp;
-@property (readonly, copy, nonatomic) NSTimeZone *timezone;
-@property (retain, nonatomic) NSString *timezoneName;
-@property (readonly, nonatomic) NSUInteger traceID;
-@property (readonly, nonatomic) struct timezone tz;
-
--(BOOL)persisted;
--(id)description;
--(id)properties;
--(void)_addProperties:(id)arg0 ;
--(id)_initWithProperties:(id)arg0;
-
-@end
-
-NS_ASSUME_NONNULL_END
-
-
-/// A subclass of OSActivityEvent,
-/// with additional fields suitable for an informational log message.
-@interface OSActivityLogMessageEvent : OSActivityEvent
-
-@property (readonly, copy, nonatomic) NSString * _Nullable category;
-@property (readonly, nonatomic) unsigned char messageType;
-@property (readonly, nonatomic) NSUInteger senderProgramCounter;
-@property (readonly, copy, nonatomic) NSString * _Nullable subsystem;
-
--(instancetype _Nonnull)initWithEntry:(struct os_activity_stream_entry_s * _Nonnull)arg0 ;
-//-(void)_addProperties:(id)arg0 ;
-
-@end
-
 #define OS_ACTIVITY_MAX_CALLSTACK 32
 
 enum {
@@ -159,13 +106,11 @@ typedef struct os_activity_statedump_s {
 struct os_activity_stream_entry_s {
     os_activity_stream_type_t type;
 
-    // information about the process streaming the data
     pid_t pid;
     uint64_t proc_id;
     const uint8_t *proc_imageuuid;
     const char *proc_imagepath;
 
-    // the activity associated with this streamed event
     os_activity_id_t activity_id;
     os_activity_id_t parent_id;
 

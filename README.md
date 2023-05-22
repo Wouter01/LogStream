@@ -6,6 +6,8 @@ The logs captured are the same ones visible in Console.app.
 
 ## Usage
 
+Capturing logs for one process:
+
 ```swift
 // Specify the process identifier of which to capture logs.
 let pid: pid_t = ...
@@ -18,4 +20,12 @@ Task {
 }
 ```
 
+Logs of multiple processes can also be captures with another initializer:
+```swift
+public static func logs(for processIDs: [pid_t], flags: ActivityStreamOptions) -> AsyncStream<LogMessage>
+```
 
+To capture logs of all processes, use the following initializer:
+```swift
+public static func logs(flags: ActivityStreamOptions) -> AsyncStream<LogMessage>
+```

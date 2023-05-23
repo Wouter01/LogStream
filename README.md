@@ -29,3 +29,5 @@ To capture logs of all processes, use the following initializer:
 ```swift
 public static func logs(flags: ActivityStreamOptions) -> AsyncStream<LogMessage>
 ```
+
+> Note: To link against the private framework LoggingSupport, which is used by this package, you may be required to set an extra search path. You can do this by adding the following to `System Framework Search Paths` in your projects build settings: `$(DEVELOPER_SDK_DIR)/MacOSX.sdk/System/Library/PrivateFrameworks`

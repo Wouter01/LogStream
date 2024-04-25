@@ -29,16 +29,18 @@ public enum LogStream {
     /// }
     /// ```
     public static func logs(for processID: pid_t, flags: ActivityStreamOptions = [.historical, .processOnly]) -> AsyncStream<LogMessage> {
-        return AsyncStream { continuation in
 
-            let stream = createStream(pid: processID, flags: flags, continuation: continuation)
+        let (stream, continuation) = AsyncStream.makeStream(of: LogMessage.self)
 
-            continuation.onTermination = { _ in
-                cancelLog(stream: stream)
-            }
+        let logstream = createStream(pid: processID, flags: flags, continuation: continuation)
 
-            resumeLog(stream: stream)
+        continuation.onTermination = { _ in
+            cancelLog(stream: logstream)
         }
+
+        resumeLog(stream: logstream)
+        
+        return stream
     }
 
     /// Retrieve activity logs for a selection of processes using an asynchronous stream.
@@ -59,17 +61,19 @@ public enum LogStream {
     /// }
     /// ```
     public static func logs(for processIDs: [pid_t], flags: ActivityStreamOptions = [.historical, .processOnly]) -> AsyncStream<LogMessage> {
-        AsyncStream { continuation in
-            let streams = processIDs.map {
-                createStream(pid: $0, flags: flags, continuation: continuation)
-            }
+        let (stream, continuation) = AsyncStream.makeStream(of: LogMessage.self)
 
-            continuation.onTermination = { _ in
-                streams.forEach(cancelLog)
-            }
-
-            streams.forEach(resumeLog)
+        let logstreams = processIDs.map {
+            createStream(pid: $0, flags: flags, continuation: continuation)
         }
+
+        continuation.onTermination = { _ in
+            logstreams.forEach(cancelLog)
+        }
+
+        logstreams.forEach(resumeLog)
+
+        return stream
     }
 
     /// Retrieve activity logs for all processes using an asynchronous stream.

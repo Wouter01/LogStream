@@ -8,7 +8,7 @@
 import OSLog
 
 /// Represents a log message captured from the activity logs.
-public struct LogMessage: Hashable {
+public struct LogMessage: Hashable, Sendable {
     /// The log message string.
     public let message: String
 

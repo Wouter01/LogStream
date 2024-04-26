@@ -26,4 +26,6 @@ public extension ActivityStreamOptions {
     static let info = ActivityStreamOptions(rawValue: 1 << 8)
     static let promiscuous = ActivityStreamOptions(rawValue: 1 << 9)
     static let preciseTimestamps = ActivityStreamOptions(rawValue: 1 << 9)
+
+    static let `default`: ActivityStreamOptions = [.historical, .processOnly]
 }

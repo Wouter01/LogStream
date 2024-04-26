@@ -6,6 +6,7 @@
 //
 
 import ExternalAppLoggerHeaders
+import Foundation
 
 public enum LogStream {
 
@@ -28,17 +29,17 @@ public enum LogStream {
     ///     }
     /// }
     /// ```
-    public static func logs(for processID: pid_t, flags: ActivityStreamOptions = [.historical, .processOnly]) -> AsyncStream<LogMessage> {
+    public static func logs(for processID: pid_t, flags: ActivityStreamOptions = .default) -> AsyncStream<LogMessage> {
 
         let (stream, continuation) = AsyncStream.makeStream(of: LogMessage.self)
 
         let logstream = createStream(pid: processID, flags: flags, continuation: continuation)
 
         continuation.onTermination = { _ in
-            cancelLog(stream: logstream)
+            LoggingSupport.cancelLog(logstream)
         }
 
-        resumeLog(stream: logstream)
+        LoggingSupport.resumeLog(logstream)
 
         return stream
     }
@@ -60,7 +61,7 @@ public enum LogStream {
     ///     }
     /// }
     /// ```
-    public static func logs(for processIDs: [pid_t], flags: ActivityStreamOptions = [.historical, .processOnly]) -> AsyncStream<LogMessage> {
+    public static func logs(for processIDs: [pid_t], flags: ActivityStreamOptions = .default) -> AsyncStream<LogMessage> {
         let (stream, continuation) = AsyncStream.makeStream(of: LogMessage.self)
 
         let logstreams = processIDs.map {
@@ -68,10 +69,10 @@ public enum LogStream {
         }
 
         continuation.onTermination = { _ in
-            logstreams.forEach(cancelLog)
+            logstreams.forEach(LoggingSupport.cancelLog)
         }
 
-        logstreams.forEach(resumeLog)
+        logstreams.forEach(LoggingSupport.resumeLog)
 
         return stream
     }
@@ -91,43 +92,30 @@ public enum LogStream {
     ///     }
     /// }
     /// ```
-    public static func logs(flags: ActivityStreamOptions = [.historical, .processOnly]) -> AsyncStream<LogMessage> {
+    public static func logs(flags: ActivityStreamOptions = .default) -> AsyncStream<LogMessage> {
         LogStream.logs(for: -1, flags: flags)
     }
+
+    static let messageClass = unsafeBitCast(NSClassFromString("OSActivityLogMessageEvent"), to: _OSActivityLogMessageEvent.Type.self)
 
     static func createStream(
         pid: pid_t,
         flags: ActivityStreamOptions,
         continuation: AsyncStream<LogMessage>.Continuation
-    ) -> ActivityStream? {
-        streamLog(pid: pid, flags: flags.rawValue) { entryPointer, error in
+    ) -> LoggingSupport.ActivityStream? {
+        LoggingSupport.streamLog(pid, flags.rawValue) { entryPointer, error in
             guard error == 0, let entryPointer else { return false }
 
             let entry = entryPointer.pointee
 
-            guard 
+            guard
                 entry.type == OS_ACTIVITY_STREAM_TYPE_LOG_MESSAGE || entry.type == OS_ACTIVITY_STREAM_TYPE_LEGACY_LOG_MESSAGE
             else { return true }
 
-            let event = OSActivityLogMessageEvent(entry: entryPointer)
+            let event = messageClass.init(entry: entryPointer)
 
             continuation.yield(LogMessage(event))
             return true
         }
     }
 }
-
-typealias ActivityStream = os_activity_stream_t
-
-@_silgen_name("os_activity_stream_for_pid")
-fileprivate func streamLog(
-    pid: pid_t,
-    flags: ActivityStreamOptions.RawValue,
-    stream_block: (@convention(block) (os_activity_stream_entry_t?, Int32) -> Bool)?
-) -> ActivityStream?
-
-@_silgen_name("os_activity_stream_resume")
-fileprivate func resumeLog(stream: ActivityStream?)
-
-@_silgen_name("os_activity_stream_cancel")
-fileprivate func cancelLog(stream: ActivityStream?)

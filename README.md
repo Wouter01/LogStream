@@ -4,6 +4,9 @@ This package provides some utilities to capture logs of other processes. This ca
 
 The logs captured are the same ones visible in Console.app.
 
+> [!IMPORTANT]
+> This package makes use of the private framework LoggingSupport. While unlikely, OS updates might change the internals of the framework and break this package.
+
 ## Usage
 
 Capturing logs for one process:
@@ -29,5 +32,3 @@ To capture logs of all processes, use the following initializer:
 ```swift
 public static func logs(flags: ActivityStreamOptions) -> AsyncStream<LogMessage>
 ```
-
-> Note: To link against the private framework LoggingSupport, which is used by this package, you may be required to set an extra search path. You can do this by adding the following to `System Framework Search Paths` in your projects build settings: `$(DEVELOPER_SDK_DIR)/MacOSX.sdk/System/Library/PrivateFrameworks`

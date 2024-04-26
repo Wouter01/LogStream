@@ -25,10 +25,12 @@ let package = Package(
         
         .target(
             name: "ExternalAppLoggerHeaders",
-            path: "Sources/Headers",
-            linkerSettings: [
-                .linkedFramework("LoggingSupport")
-            ]
+            path: "Sources/Headers"
+        ),
+
+        .testTarget(
+            name: "LogStreamTests",
+            dependencies: ["LogStream"]
         )
     ]
 )

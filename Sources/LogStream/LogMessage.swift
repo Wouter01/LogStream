@@ -45,7 +45,7 @@ extension LogMessage: Hashable {
 }
 
 extension LogMessage {
-    init(_ event: LoggingSupport._OSActivityLogMessageEvent) {
+    init(_ event: _OSActivityLogMessageEvent) {
         self.init(
             message: event.eventMessage,
             date: event.timestamp,

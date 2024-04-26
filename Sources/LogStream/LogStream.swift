@@ -96,7 +96,7 @@ public enum LogStream {
         LogStream.logs(for: -1, flags: flags)
     }
 
-    static let messageClass = unsafeBitCast(NSClassFromString("OSActivityLogMessageEvent"), to: LoggingSupport._OSActivityLogMessageEvent.Type.self)
+    static let messageClass = unsafeBitCast(NSClassFromString("OSActivityLogMessageEvent"), to: _OSActivityLogMessageEvent.Type.self)
 
     static func createStream(
         pid: pid_t,

@@ -6,7 +6,7 @@
 //
 
 /// Options for configuring the behavior of an activity stream.
-public struct ActivityStreamOptions: OptionSet {
+public struct ActivityStreamOptions: OptionSet, Sendable {
     public let rawValue: UInt32
 
     public init(rawValue: UInt32) {

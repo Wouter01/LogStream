@@ -9,7 +9,7 @@ import OSLog
 import ExternalAppLoggerHeaders
 
 /// Represents a log message captured from the activity logs.
-public struct LogMessage: Hashable, Sendable {
+public struct LogMessage: Sendable {
     /// The log message string.
     public let message: String
 
@@ -30,6 +30,17 @@ public struct LogMessage: Hashable, Sendable {
 
     /// The process identifier (PID) of the process that generated the log message.
     public let processID: pid_t
+}
+
+extension LogMessage: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(message)
+        hasher.combine(date)
+        hasher.combine(subsystem)
+        hasher.combine(category)
+        hasher.combine(process)
+        hasher.combine(processID)
+    }
 }
 
 extension LogMessage {

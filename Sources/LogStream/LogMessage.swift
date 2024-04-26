@@ -45,7 +45,7 @@ extension LogMessage: Hashable {
 }
 
 extension LogMessage {
-    init(_ event: _OSActivityLogMessageEvent) {
+    init(_ event: LoggingSupport._OSActivityLogMessageEvent) {
         self.init(
             message: event.eventMessage,
             date: event.timestamp,
@@ -56,17 +56,4 @@ extension LogMessage {
             processID: event.processID
         )
     }
-}
-
-@objc
-protocol _OSActivityLogMessageEvent {
-    var eventMessage: String { get set }
-    var timestamp: Date { get set }
-    var subsystem: String? { get set }
-    var category: String? { get set }
-    var messageType: UInt8 { get set }
-    var process: String { get set }
-    var processID: pid_t { get set }
-
-    init(entry: UnsafeMutablePointer<os_activity_stream_entry_s>)
 }

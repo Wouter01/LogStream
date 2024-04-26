@@ -39,7 +39,7 @@ public enum LogStream {
         }
 
         resumeLog(stream: logstream)
-        
+
         return stream
     }
 
@@ -95,28 +95,23 @@ public enum LogStream {
         LogStream.logs(for: -1, flags: flags)
     }
 
-    static func createStream(pid: pid_t, flags: ActivityStreamOptions, continuation: AsyncStream<LogMessage>.Continuation) -> ActivityStream? {
+    static func createStream(
+        pid: pid_t,
+        flags: ActivityStreamOptions,
+        continuation: AsyncStream<LogMessage>.Continuation
+    ) -> ActivityStream? {
         streamLog(pid: pid, flags: flags.rawValue) { entryPointer, error in
-
             guard error == 0, let entryPointer else { return false }
 
             let entry = entryPointer.pointee
 
-            guard entry.type == OS_ACTIVITY_STREAM_TYPE_LOG_MESSAGE || entry.type == OS_ACTIVITY_STREAM_TYPE_LEGACY_LOG_MESSAGE else { return true }
+            guard 
+                entry.type == OS_ACTIVITY_STREAM_TYPE_LOG_MESSAGE || entry.type == OS_ACTIVITY_STREAM_TYPE_LEGACY_LOG_MESSAGE
+            else { return true }
 
             let event = OSActivityLogMessageEvent(entry: entryPointer)
 
-            let logMessage = LogMessage(
-                message: event.eventMessage,
-                date: event.timestamp,
-                subsystem: event.subsystem,
-                category: event.category,
-                type: .init(event.messageType),
-                process: event.process,
-                processID: event.processID
-            )
-
-            continuation.yield(logMessage)
+            continuation.yield(LogMessage(event))
             return true
         }
     }

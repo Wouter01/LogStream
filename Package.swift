@@ -24,7 +24,9 @@ let package = Package(
             name: "ExternalAppLoggerHeaders",
             path: "Sources/Headers",
             swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency")
+                .enableExperimentalFeature("StrictConcurrency"),
+                .enableExperimentalFeature("RegionBasedIsolation"),
+                .enableExperimentalFeature("TransferringArgsAndResults")
             ],
             linkerSettings: [
                 .linkedFramework("LoggingSupport")

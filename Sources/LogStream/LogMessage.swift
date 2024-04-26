@@ -6,6 +6,7 @@
 //
 
 import OSLog
+import ExternalAppLoggerHeaders
 
 /// Represents a log message captured from the activity logs.
 public struct LogMessage: Hashable, Sendable {
@@ -29,4 +30,18 @@ public struct LogMessage: Hashable, Sendable {
 
     /// The process identifier (PID) of the process that generated the log message.
     public let processID: pid_t
+}
+
+extension LogMessage {
+    init(_ event: OSActivityLogMessageEvent) {
+        self.init(
+            message: event.eventMessage,
+            date: event.timestamp,
+            subsystem: event.subsystem,
+            category: event.category,
+            type: OSLogType(event.messageType),
+            process: event.process,
+            processID: event.processID
+        )
+    }
 }

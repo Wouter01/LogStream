@@ -38,6 +38,7 @@ extension LogMessage: Hashable {
         hasher.combine(date)
         hasher.combine(subsystem)
         hasher.combine(category)
+        hasher.combine(type.rawValue)
         hasher.combine(process)
         hasher.combine(processID)
     }
